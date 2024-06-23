@@ -7,7 +7,7 @@ let productos = [
         id: "1",
         name: "cocina",
         price: 12000,
-        Img: "http://picsum.photos/200/300",
+        Img:"http://picsum.photos/200/300",
         description: "cocina de herreria",
     },
     {
@@ -36,7 +36,7 @@ let productos = [
         id: "5",
         name: "repisa rombo",
         price: 2000,
-        Img: "http://picsum.photos/200/300",
+        Img:"http://picsum.photos/200/300" ,
         descripcion:"perisa rombo de herreria con madera",
     },
 
@@ -44,6 +44,8 @@ let productos = [
 
 
 ];
+
+let prd =localStorage.setItem("product",JSON.stringify(productos))
 
 function mostrarProductos(){
   let contenedor = document.querySelector("#productos");
@@ -62,12 +64,56 @@ function mostrarProductos(){
     </div>
      `
   } 
-  document.querySelectorAll(".agregar-carrito").forEach(btn {
-    btn.addEventlisterent("click",() {
+  document.querySelectorAll(".agregar-carrito").forEach(btn=> {
+    btn.addEventlisterent("click",() =>{
       const productID = getAttribute( "data-id");
-      console.log(productID)
+      agregarAlcarrito(productID);
     })
   })
 }
 
+function agregarAlcarrito(productoID){
+ let carrito = JSON.parse(localStorage.getItem("carrito"))|| [];
+ const products = productos.find(product => product.id = productoID)
+
+ const productosEnCarrito = carrito.find(p => p.id = productoID);
+
+ if(productosEnCarrito){
+  productosEnCarrito.cantidad += 1;
+  productosEnCarrito.totalPrice = productosEnCarrito.cantidad *productosEnCarrito.price;
+ } else{
+  carrito.push({
+    id: productoID,
+    name: products.name,
+    price: products.price,
+    cantidad:1,
+    totalPrice: products.price
+  })
+ }
+ localStorage.setItem("carrito", JSON.stringify(carrito))
+
+ mostrarCarrito()
+}
+
+function mostrarCarrito(){
+  let carrito = JSON.parse(localStorage.getItem("carrito"))|| [];
+  let contenedorCarrito = document.querySelector("#contenedor-carrito");
+  let footer = document.querySelector("#carrito-footer")
+
+  carrito.forEach((p) => {
+   contenedorCarrito.innerHTML += `
+   <div class="card-carrito" id=${product.id}>
+     <h3>${product.name}</h3>
+     <p>$${product.price}</p>
+     <p>Cantidad: ${p.cantidad}</p>
+     <p>Total:$${p.totalPrice}</p>
+ </div>
+   `
+  })
+let totalCarrito= carrito.reduce((acc, p) => acc + p.totalPrice, 0)
+
+  footer.innerHTML =`<p> Total: $${totalCarrito}</p>`
+ 
+}
 mostrarProductos()
+mostrarCarrito()
